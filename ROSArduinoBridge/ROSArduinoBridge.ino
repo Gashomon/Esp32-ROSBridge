@@ -225,7 +225,7 @@ int runCommand() {
     Serial.println("OK"); 
     break;
 
-  // Must change Update PID
+  // Must tweak Update PID
   case UPDATE_PID: 
     while ((str = strtok_r(p, ":", &p)) != &nul) {
        pid_args[i] = atoi(str);
@@ -252,6 +252,10 @@ void setup() {
 #ifdef USE_BASE
   #ifdef ARDUINO_ENC_COUNTER
     // enter encoder code initializations
+    pinMode(LEFT_ENC_PIN_A, INPUT);
+    pinMode(RIGHT_ENC_PIN_A, INPUT);
+    pinMode(LEFT_ENC_PIN_B, INPUT);
+    pinMode(RIGHT_ENC_PIN_B, INPUT);
     attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_A),ISR_L,RISING);
     attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A),ISR_R,RISING);
   #endif

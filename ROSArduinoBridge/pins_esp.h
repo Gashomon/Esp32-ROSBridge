@@ -23,57 +23,73 @@
 #ifndef Pins_Esp_h
 #define Pins_Esp_h
 
-#define NUM_DIGITAL_PINS            20
-#define NUM_ANALOG_INPUTS           6
-#define analogInputToDigitalPin(p)  ((p < 6) ? (p) + 14 : -1)
+#define GPIO_0 0 //PULLUP INPUT
+#define GPIO_1 1 //TX PIN
+#define GPIO_2 2
+#define GPIO_3 3 //RX PIN
+#define GPIO_4 4
+#define GPIO_5 5
+#define GPIO_6 6 //NO EXTERNAL PIN
+#define GPIO_7 7 //NO EXTERNAL PIN 
+#define GPIO_8 8 //NO EXTERNAL PIN
+#define GPIO_9 9 //NO EXTERNAL PIN
+#define GPIO_10 10 //NO EXTERNAL PIN
+#define GPIO_11 11 //NO EXTERNAL PIN
+#define GPIO_12 12 // STRAPPING PIN
+#define GPIO_13 13
+#define GPIO_14 14 
+#define GPIO_15 15 //STRAPPING PIN
+#define GPIO_16 16
+#define GPIO_17 17
+#define GPIO_18 18
+#define GPIO_19 19
+#define GPIO_21 21
+#define GPIO_22 22
+#define GPIO_23 23
+#define GPIO_25 25
+#define GPIO_26 26
+#define GPIO_27 27
+#define GPIO_32 32
+#define GPIO_33 33
+#define GPIO_34 34 //INPUT ONLY
+#define GPIO_35 35 //INPUT ONLY
+#define GPIO_36 36 //INPUT ONLY
+#define GPIO_39 39 //INPUT ONLY
 
-#if defined(__AVR_ATmega8__)
-#define digitalPinHasPWM(p)         ((p) == 9 || (p) == 10 || (p) == 11)
-#else
-#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11)
-#endif
+// Board Defined Pins source:https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+static const uint8_t GNDby3V = GPIO_0;
+static const uint8_t TX0 = GPIO_1;
+static const uint8_t D2 = GPIO_2;
+static const uint8_t RX0 = GPIO_3;
+static const uint8_t D4 = GPIO_4;
+static const uint8_t D5 = GPIO_5;
+static const uint8_t D12 = GPIO_12; 
+static const uint8_t D13 = GPIO_13;
+static const uint8_t D14 = GPIO_14;
+static const uint8_t D15 = GPIO_15;
+static const uint8_t TX3 = GPIO_16;
+static const uint8_t RX3 = GPIO_17;
+static const uint8_t D18 = GPIO_18;
+static const uint8_t D19 = GPIO_19;
+static const uint8_t D21 = GPIO_21;
+static const uint8_t D22 = GPIO_22;
+static const uint8_t D23 = GPIO_23;
+static const uint8_t D25 = GPIO_25;
+static const uint8_t D26 = GPIO_26;
+static const uint8_t D27 = GPIO_27;
+static const uint8_t D32 = GPIO_32;
+static const uint8_t D33 = GPIO_33;
+static const uint8_t D34 = GPIO_34;
+static const uint8_t D35 = GPIO_35;
+static const uint8_t D36 = GPIO_36;
+static const uint8_t D39 = GPIO_39;
 
-#define PIN_SPI_SS    (10)
-#define PIN_SPI_MOSI  (11)
-#define PIN_SPI_MISO  (12)
-#define PIN_SPI_SCK   (13)
-
-static const uint8_t SS   = PIN_SPI_SS;
-static const uint8_t MOSI = PIN_SPI_MOSI;
-static const uint8_t MISO = PIN_SPI_MISO;
-static const uint8_t SCK  = PIN_SPI_SCK;
-
-#define PIN_WIRE_SDA        (18)
-#define PIN_WIRE_SCL        (19)
-
-static const uint8_t SDA = PIN_WIRE_SDA;
-static const uint8_t SCL = PIN_WIRE_SCL;
-
-#define LED_BUILTIN 13
-
-#define PIN_A0   (14)
-#define PIN_A1   (15)
-#define PIN_A2   (16)
-#define PIN_A3   (17)
-#define PIN_A4   (18)
-#define PIN_A5   (19)
-#define PIN_A6   (20)
-#define PIN_A7   (21)
-
-static const uint8_t A0 = PIN_A0;
-static const uint8_t A1 = PIN_A1;
-static const uint8_t A2 = PIN_A2;
-static const uint8_t A3 = PIN_A3;
-static const uint8_t A4 = PIN_A4;
-static const uint8_t A5 = PIN_A5;
-static const uint8_t A6 = PIN_A6;
-static const uint8_t A7 = PIN_A7;
-
-#define digitalPinToPCICR(p)    (((p) >= 0 && (p) <= 21) ? (&PCICR) : ((uint8_t *)0))
-#define digitalPinToPCICRbit(p) (((p) <= 7) ? 2 : (((p) <= 13) ? 0 : 1))
-#define digitalPinToPCMSK(p)    (((p) <= 7) ? (&PCMSK2) : (((p) <= 13) ? (&PCMSK0) : (((p) <= 21) ? (&PCMSK1) : ((uint8_t *)0))))
-#define digitalPinToPCMSKbit(p) (((p) <= 7) ? (p) : (((p) <= 13) ? ((p) - 8) : ((p) - 14)))
-
-#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
+// Special PIN Names source:https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+static const uint8_t SCK = GPIO_6; //CLK
+static const uint8_t SDO = GPIO_7; //SD0
+static const uint8_t SDI = GPIO_8; //SD1
+static const uint8_t SHD = GPIO_9; //SD2
+static const uint8_t SWP = GPIO_10; //SD3
+static const uint8_t CSC = GPIO_11; //CMD
 
 #endif

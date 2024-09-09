@@ -30,26 +30,26 @@
 #elif defined(ARDUINO_ENC_COUNTER)
   volatile long left_enc_pos = 0L;
   volatile long right_enc_pos = 0L;
-  static const int8_t ENC_STATES [] = {0,1,-1,0,-1,0,0,1,1,0,0,-1,0,-1,1,0};  //encoder lookup table
-    
+
+  uint8_t curr_left = digitalRead(LEFT_ENC_PIN_A);
+  uint8_t curr_right = digitalRead(RIGHT_ENC_PIN_A);
+  uint8_t prev_left = curr_left;
+  uint8_t prev_right = curr_right;
+
   /* Interrupt routine for LEFT encoder, taking care of actual counting */
   void IRAM_ATTR ISR_L (){
-  	static uint8_t enc_last=0;
-        
-    enc_last <<=2; //shift previous state two places
-    enc_last |= (LEFT_ENC_PIN_A & (3 << 2)) >> 2; //read the current state into lowest 2 bits
-  
-  	left_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+  	if (digitalRead(LEFT_ENC_PIN_B) == LOW)
+    left_enc_pos ++;
+    else
+    left_enc_pos --;
   }
   
   /* Interrupt routine for RIGHT encoder, taking care of actual counting */
   void IRAM_ATTR ISR_R (){
-        static uint8_t enc_last=0;
-          	
-    enc_last <<=2; //shift previous state two places
-    enc_last |= (RIGHT_ENC_PIN_A & (3 << 4)) >> 4; //read the current state into lowest 2 bits
-  
-  	right_enc_pos += ENC_STATES[(enc_last & 0x0f)];
+    if (digitalRead(RIGHT_ENC_PIN_B) == LOW)
+    right_enc_pos ++;
+    else
+    right_enc_pos --;
   }
   
   /* Wrap the encoder reading function */

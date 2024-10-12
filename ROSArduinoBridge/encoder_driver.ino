@@ -37,7 +37,7 @@
   uint8_t prev_right = curr_right;
 
   /* Interrupt routine for LEFT encoder, taking care of actual counting */
-  void IRAM_ATTR ISR_L (){
+  void ISR_L (){
   	if (digitalRead(LEFT_ENC_PIN_B) == LOW)
     left_enc_pos ++;
     else
@@ -45,7 +45,7 @@
   }
   
   /* Interrupt routine for RIGHT encoder, taking care of actual counting */
-  void IRAM_ATTR ISR_R (){
+  void ISR_R (){
     if (digitalRead(RIGHT_ENC_PIN_B) == LOW)
     right_enc_pos ++;
     else

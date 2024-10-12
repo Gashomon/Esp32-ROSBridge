@@ -3,12 +3,12 @@
    *************************************************************/
 
 #ifdef L298_MOTOR_DRIVER
-  #define RIGHT_MOTOR_BACKWARD 5
-  #define LEFT_MOTOR_BACKWARD  6
-  #define RIGHT_MOTOR_FORWARD  9
-  #define LEFT_MOTOR_FORWARD   10
-  #define RIGHT_MOTOR_ENABLE 12
-  #define LEFT_MOTOR_ENABLE 13
+  #define RIGHT_MOTOR_BACKWARD GPIO_26
+  #define LEFT_MOTOR_BACKWARD  GPIO_33
+  #define RIGHT_MOTOR_FORWARD  GPIO_25
+  #define LEFT_MOTOR_FORWARD   GPIO_32
+  #define RIGHT_MOTOR_ENABLE GPIO_14
+  #define LEFT_MOTOR_ENABLE GPIO_13
 #endif
 
 void initMotorController();

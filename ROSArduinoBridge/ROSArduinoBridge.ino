@@ -146,7 +146,7 @@ void resetCommand() {
 }
 
 /* Run a command.  Commands are defined in commands.h */
-int runCommand() {
+void runCommand() {
   int i = 0;
   char *p = argv1;
   char *str;
@@ -154,7 +154,7 @@ int runCommand() {
   arg1 = atoi(argv1);
   arg2 = atoi(argv2);
   char nul = '/0';
-  
+  // Serial.println("Invalid Command");
   switch(cmd) {
   case GET_BAUDRATE:
     Serial.println(BAUDRATE);
@@ -280,16 +280,19 @@ void setup() {
    interval and check for auto-stop conditions.
 */
 void loop() {
+  
+    // Serial.println(Serial.available()); delay(1000);
   while (Serial.available() > 0) {
     
     // Read the next character
     chr = Serial.read();
-
+    // Serial.println(chr); delay(1000);
     // Terminate a command with a CR
     if (chr == 13) {
       if (arg == 1) argv1[in_dicks] = NULL;
       else if (arg == 2) argv2[in_dicks] = NULL;
       runCommand();
+      // Serial.println(BAUDRATE);
       resetCommand();
     }
     // Use spaces to delimit parts of the command
@@ -301,6 +304,7 @@ void loop() {
         arg = 2;
         in_dicks = 0;
       }
+      // Serial.print("space");
       continue;
     }
     else {
@@ -317,7 +321,10 @@ void loop() {
         argv2[in_dicks] = chr;
         in_dicks++;
       }
+      // Serial.print("cmd");
     }
+    
+    // Serial.println("hello"); delay(1000);
   }
   
 // If we are using base control, run a PID calculation at the appropriate intervals
@@ -328,8 +335,9 @@ void loop() {
   }
   
   // Check to see if we have exceeded the auto-stop interval
-  if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {;
+  if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
     setMotorSpeeds(0, 0);
+    // Serial.println("hi"); delay(1000);
     moving = 0;
   }
 #endif

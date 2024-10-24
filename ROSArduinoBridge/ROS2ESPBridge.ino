@@ -50,20 +50,14 @@
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
-   /* The Pololu VNH5019 dual motor driver shield */
-   //#define POLOLU_VNH5019
-
-   /* The Pololu MC33926 dual motor driver shield */
-   //#define POLOLU_MC33926
-
-   /* The RoboGaia encoder shield */
-   //#define ROBOGAIA
-   
    /* Encoders directly attached to Arduino board */
    #define ARDUINO_ENC_COUNTER
 
    /* L298 Motor driver*/
    #define L298_MOTOR_DRIVER
+
+  /* My own IMU sensor*/
+  #define MPU6050_IMU_READER
 #endif
 
 //#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
@@ -112,6 +106,9 @@
    in this number of milliseconds */
   #define AUTO_STOP_INTERVAL 2000
   long lastMotorCommand = AUTO_STOP_INTERVAL;
+
+  #include "imu_driver.h";
+  
 #endif
 
 /* Variable initialization */
@@ -237,6 +234,10 @@ void runCommand() {
     Ko = pid_args[3];
     Serial.println("OK");
     break;
+
+    #ifdef MPU6050_IMU_READER
+
+    #endif
 #endif
   default:
     Serial.println("Invalid Command");
@@ -261,6 +262,10 @@ void setup() {
   #endif
   initMotorController();
   resetPID();
+
+  #ifdef MPU6050_IMU_READER
+  
+  #endif
 #endif
 
 /* Attach servos if used */
@@ -340,6 +345,11 @@ void loop() {
     // Serial.println("hi"); delay(1000);
     moving = 0;
   }
+#endif
+
+//imu sensor reading
+#ifdef MPU6050_IMU_READER
+
 #endif
 
 // Sweep servos

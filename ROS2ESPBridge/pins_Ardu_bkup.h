@@ -1,4 +1,4 @@
-/*
+*
   pins_arduino.h - Pin definition functions for Arduino
   Part of Arduino - http://www.arduino.cc/
 

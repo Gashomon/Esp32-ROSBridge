@@ -50,18 +50,18 @@
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
-   /* Encoders directly attached to Arduino board */
-   #define ARDUINO_ENC_COUNTER
+   /* Use Encoders */
+   #define USE_ENCODERS
 
    /* L298 Motor driver*/
    #define L298_MOTOR_DRIVER
 
   /* My own IMU sensor*/
-  #define MPU6050_IMU_READER
-#endif
+  // #define MPU6050_IMU_READER
 
-//#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
-#undef USE_SERVOS     // Disable use of PWM servos
+  /* My own IR sensor*/
+  // #define some_IR
+#endif
 
 /* Serial port baud rate */
 #define BAUDRATE     57600
@@ -72,16 +72,11 @@
 /* Include definition of serial commands */
 #include "commands.h"
 
-/* Sensor functions */
-#include "sensors.h"
-
-/* Include servo support if required */
-#ifdef USE_SERVOS
-   #include <Servo.h>
-   #include "servos.h"
-#endif
-
 #ifdef USE_BASE
+
+  // Assign pins
+  #include "pins_esp.h"
+
   /* Motor driver function definitions */
   #include "motor_driver.h"
 
@@ -91,7 +86,9 @@
   /* PID parameters and functions */
   #include "diff_controller.h"
 
-  #include "pins_esp.h"
+  /* IMU driver function definitions */
+  
+  /* IR driver function definitions*/
 
   /* Run the PID loop at 30 times per second */
   #define PID_RATE           30     // Hz
@@ -102,13 +99,9 @@
   /* Track the next time we make a PID calculation */
   unsigned long nextPID = PID_INTERVAL;
 
-  /* Stop the robot if it hasn't received a movement command
-   in this number of milliseconds */
+  /* Stop the robot if it hasn't received a movement command in this number of milliseconds */
   #define AUTO_STOP_INTERVAL 2000
-  long lastMotorCommand = AUTO_STOP_INTERVAL;
-
-  #include "imu_driver.h";
-  
+  long lastMotorCommand = AUTO_STOP_INTERVAL;  
 #endif
 
 /* Variable initialization */
@@ -151,7 +144,7 @@ void runCommand() {
   arg1 = atoi(argv1);
   arg2 = atoi(argv2);
   char nul = '/0';
-  // Serial.println("Invalid Command");
+  
   switch(cmd) {
   case GET_BAUDRATE:
     Serial.println(BAUDRATE);
@@ -179,15 +172,7 @@ void runCommand() {
   case PING:
     Serial.println(Ping(arg1));
     break;
-#ifdef USE_SERVOS
-  case SERVO_WRITE:
-    servos[arg1].setTargetPosition(arg2);
-    Serial.println("OK");
-    break;
-  case SERVO_READ:
-    Serial.println(servos[arg1].getServo().read());
-    break;
-#endif
+
     
 #ifdef USE_BASE
   case READ_ENCODERS:
@@ -195,11 +180,12 @@ void runCommand() {
     Serial.print(" ");
     Serial.println(readEncoder(RIGHT));
     break;
+
    case RESET_ENCODERS:
     resetEncoders();
     resetPID();
-    Serial.println("OK");
     break;
+
   case MOTOR_SPEEDS:
     /* Reset the auto stop timer */
     lastMotorCommand = millis();
@@ -211,15 +197,14 @@ void runCommand() {
     else moving = 1;
     leftPID.TargetTicksPerFrame = arg1;
     rightPID.TargetTicksPerFrame = arg2;
-    Serial.println("OK"); 
     break;
+
   case MOTOR_RAW_PWM:
     /* Reset the auto stop timer */
     lastMotorCommand = millis();
     resetPID();
     moving = 0; // Sneaky way to temporarily disable the PID
     setMotorSpeeds(arg1, arg2);
-    Serial.println("OK"); 
     break;
 
   // Must tweak Update PID
@@ -234,10 +219,12 @@ void runCommand() {
     Ko = pid_args[3];
     Serial.println("OK");
     break;
+    
+    case IMU_READ:
+    break;
 
-    #ifdef MPU6050_IMU_READER
-
-    #endif
+    case IR_READ:
+    break;
 #endif
   default:
     Serial.println("Invalid Command");
@@ -251,8 +238,8 @@ void setup() {
 
 // Initialize the motor controller if used */
 #ifdef USE_BASE
-  #ifdef ARDUINO_ENC_COUNTER
-    // enter encoder code initializations
+  #ifdef USE_ENCODERS
+    // encoder code initializations
     pinMode(LEFT_ENC_PIN_A, INPUT);
     pinMode(RIGHT_ENC_PIN_A, INPUT);
     pinMode(LEFT_ENC_PIN_B, INPUT);
@@ -263,22 +250,13 @@ void setup() {
   initMotorController();
   resetPID();
 
-  #ifdef MPU6050_IMU_READER
+  // IMU initializations
   
-  #endif
-#endif
 
-/* Attach servos if used */
-  #ifdef USE_SERVOS
-    int i;
-    for (i = 0; i < N_SERVOS; i++) {
-      servos[i].initServo(
-          servoPins[i],
-          stepDelay[i],
-          servoInitPosition[i]);
-    }
-  #endif
-}
+  // IR initializations
+  pinMode(LEFT_IR_PIN, INPUT);
+  pinMode(RIGHT_IR_PIN, INPUT);
+#endif
 
 /* Enter the main loop.  Read and parse input from the serial port
    and run any valid commands. Run a PID calculation at the target
@@ -297,7 +275,6 @@ void loop() {
       if (arg == 1) argv1[in_dicks] = NULL;
       else if (arg == 2) argv2[in_dicks] = NULL;
       runCommand();
-      // Serial.println(BAUDRATE);
       resetCommand();
     }
     // Use spaces to delimit parts of the command
@@ -309,7 +286,6 @@ void loop() {
         arg = 2;
         in_dicks = 0;
       }
-      // Serial.print("space");
       continue;
     }
     else {
@@ -326,7 +302,6 @@ void loop() {
         argv2[in_dicks] = chr;
         in_dicks++;
       }
-      // Serial.print("cmd");
     }
     
     // Serial.println("hello"); delay(1000);
@@ -342,7 +317,6 @@ void loop() {
   // Check to see if we have exceeded the auto-stop interval
   if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
     setMotorSpeeds(0, 0);
-    // Serial.println("hi"); delay(1000);
     moving = 0;
   }
 #endif
@@ -352,12 +326,4 @@ void loop() {
 
 #endif
 
-// Sweep servos
-#ifdef USE_SERVOS
-  int i;
-  for (i = 0; i < N_SERVOS; i++) {
-    servos[i].doSweep();
-  }
-#endif
-}
 

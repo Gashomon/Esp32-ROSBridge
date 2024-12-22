@@ -72,6 +72,9 @@
 /* Include definition of serial commands */
 #include "commands.h"
 
+/* Include other functions for compilation*/
+#include "sensors.h"
+
 #ifdef USE_BASE
 
   // Assign pins
@@ -223,17 +226,17 @@ void runCommand() {
     break;
     
     case IMU_READ:
-    Serial.print(getImu(accX));
+    Serial.print(getImu(ACCX));
     Serial.print(" ");
-    Serial.print(getImu(accY));
+    Serial.print(getImu(ACCY));
     Serial.print(" ");
-    Serial.print(getImu(accZ));
+    Serial.print(getImu(ACCZ));
     Serial.print(" ");
-    Serial.print(getImu(rotX));
+    Serial.print(getImu(ROTX));
     Serial.print(" ");
-    Serial.print(getImu(rotY));
+    Serial.print(getImu(ROTY));
     Serial.print(" ");
-    Serial.println(getImu(rotZ));
+    Serial.println(getImu(ROTZ));
     break;
 
     case IR_READ:
@@ -349,8 +352,6 @@ void loop() {
   #ifdef IMU_READER
     updateIMU();
   #endif
-    
-#endif
 
 
 

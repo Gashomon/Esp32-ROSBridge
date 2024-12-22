@@ -26,12 +26,12 @@
 #define LEFT            1
 #define RIGHT           0
 
-#define accX            0
-#define accY            1
-#define accZ            2
-#define rotX            3
-#define rotY            4
-#define rotZ            5
+#define ACCX            0
+#define ACCY            1
+#define ACCZ            2
+#define ROTX            3
+#define ROTY            4
+#define ROTZ            5
 
 #endif
 

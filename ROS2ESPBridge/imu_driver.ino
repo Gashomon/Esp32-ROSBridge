@@ -22,22 +22,22 @@
         float getImu(int value){
             switch (value)
             {
-            case accX
+            case ACCX:
                 return a.acceleration.x;
                 break;
-            case accY
+            case ACCY:
                 return a.acceleration.y;
                 break;
-            case accZ
+            case ACCZ:
                 return a.acceleration.z;
                 break;
-            case rotcX
+            case ROTX:
                 return g.gyro.x;
                 break;
-            case rotY
+            case ROTY:
                 return g.gyro.y;
                 break;
-            case rotZ
+            case ROTZ:
                 return g.gyro.z;
                 break;    
             default:

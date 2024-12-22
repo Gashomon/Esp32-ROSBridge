@@ -56,7 +56,7 @@
 #define GPIO_36 36 //INPUT ONLY
 #define GPIO_39 39 //INPUT ONLY
 
-// Board Defined Pins source:https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+// Board Defined Pins source: https://lastminuteengineers.com/esp32-pinout-reference/
 static const uint8_t GNDby3V = GPIO_0;
 static const uint8_t TX0 = GPIO_1;
 static const uint8_t D2 = GPIO_2;
@@ -83,13 +83,5 @@ static const uint8_t D34 = GPIO_34;
 static const uint8_t D35 = GPIO_35;
 static const uint8_t D36 = GPIO_36;
 static const uint8_t D39 = GPIO_39;
-
-// Special PIN Names source:https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
-static const uint8_t SCK = GPIO_6; //CLK
-static const uint8_t SDO = GPIO_7; //SD0
-static const uint8_t SDI = GPIO_8; //SD1
-static const uint8_t SHD = GPIO_9; //SD2
-static const uint8_t SWP = GPIO_10; //SD3
-static const uint8_t CSC = GPIO_11; //CMD
 
 #endif

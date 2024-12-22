@@ -19,12 +19,19 @@
 #define UPDATE_PID     'u'
 #define DIGITAL_WRITE  'w'
 #define ANALOG_WRITE   'x'
-#define LEFT           'LEFT'
-#define RIGHT          'RIGHT'
-
 
 #define IMU_READ       'i'
 #define IR_READ        'l'
+
+#define LEFT            1
+#define RIGHT           0
+
+#define accX            0
+#define accY            1
+#define accZ            2
+#define rotX            3
+#define rotY            4
+#define rotZ            5
 
 #endif
 

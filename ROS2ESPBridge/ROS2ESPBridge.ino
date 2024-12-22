@@ -57,10 +57,10 @@
    #define L298_MOTOR_DRIVER
 
   /* My own IMU sensor*/
-  // #define MPU6050_IMU_READER
+  #define IMU_READER
 
   /* My own IR sensor*/
-  // #define some_IR
+  #define IR_READER
 #endif
 
 /* Serial port baud rate */
@@ -87,8 +87,10 @@
   #include "diff_controller.h"
 
   /* IMU driver function definitions */
+  #include "imu_driver.h"
   
   /* IR driver function definitions*/
+  #include "ir_driver.h"
 
   /* Run the PID loop at 30 times per second */
   #define PID_RATE           30     // Hz
@@ -221,9 +223,23 @@ void runCommand() {
     break;
     
     case IMU_READ:
+    Serial.print(getImu(accX));
+    Serial.print(" ");
+    Serial.print(getImu(accY));
+    Serial.print(" ");
+    Serial.print(getImu(accZ));
+    Serial.print(" ");
+    Serial.print(getImu(rotX));
+    Serial.print(" ");
+    Serial.print(getImu(rotY));
+    Serial.print(" ");
+    Serial.println(getImu(rotZ));
     break;
 
     case IR_READ:
+    Serial.print(getIRDist(LEFT));
+    Serial.print(" ");
+    Serial.println(getIRDist(RIGHT));
     break;
 #endif
   default:
@@ -240,23 +256,32 @@ void setup() {
 #ifdef USE_BASE
   #ifdef USE_ENCODERS
     // encoder code initializations
-    pinMode(LEFT_ENC_PIN_A, INPUT);
-    pinMode(RIGHT_ENC_PIN_A, INPUT);
-    pinMode(LEFT_ENC_PIN_B, INPUT);
-    pinMode(RIGHT_ENC_PIN_B, INPUT);
-    attachInterrupt(digitalPinToInterrupt(LEFT_ENC_PIN_A),ISR_L,RISING);
-    attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_PIN_A),ISR_R,RISING);
+    pinMode(LEFT_ENC_CLK, INPUT);
+    pinMode(RIGHT_ENC_CLK, INPUT);
+    pinMode(LEFT_ENC_DT, INPUT);
+    pinMode(RIGHT_ENC_DT, INPUT);
+    attachInterrupt(digitalPinToInterrupt(LEFT_ENC_CLK),ENC_L_ISR,RISING);
+    attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_CLK),ENC_R_ISR,RISING);
   #endif
   initMotorController();
   resetPID();
 
   // IMU initializations
-  
+  #ifdef IMU_READER
+    pinMode(IMUSCL, INPUT);  
+    pinMode(IRRIGHT, INPUT);
+    beginIMU();
+  #endif
 
   // IR initializations
-  pinMode(LEFT_IR_PIN, INPUT);
-  pinMode(RIGHT_IR_PIN, INPUT);
+  #ifdef IR_READER
+    pinMode(IRLEFT, INPUT);  
+    pinMode(IRRIGHT, INPUT);
+    attachInterrupt(digitalPinToInterrupt(IRLEFT),IR_L_ISR,CHANGE);
+    attachInterrupt(digitalPinToInterrupt(IRRIGHT),IR_R_ISR,CHANGE);
+  #endif
 #endif
+}
 
 /* Enter the main loop.  Read and parse input from the serial port
    and run any valid commands. Run a PID calculation at the target
@@ -319,11 +344,16 @@ void loop() {
     setMotorSpeeds(0, 0);
     moving = 0;
   }
+
+  //imu sensor reading
+  #ifdef IMU_READER
+    updateIMU();
+  #endif
+    
 #endif
 
-//imu sensor reading
-#ifdef MPU6050_IMU_READER
+
 
 #endif
 
-
+}

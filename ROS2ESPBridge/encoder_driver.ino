@@ -9,44 +9,26 @@
    
 #ifdef USE_BASE
 
-#ifdef ROBOGAIA
-  /* The Robogaia Mega Encoder shield */
-  #include "MegaEncoderCounter.h"
-
-  /* Create the encoder shield object */
-  MegaEncoderCounter encoders = MegaEncoderCounter(4); // Initializes the Mega Encoder Counter in the 4X Count mode
-  
-  /* Wrap the encoder reading function */
-  long readEncoder(int i) {
-    if (i == LEFT) return encoders.YAxisGetCount();
-    else return encoders.XAxisGetCount();
-  }
-
-  /* Wrap the encoder reset function */
-  void resetEncoder(int i) {
-    if (i == LEFT) return encoders.YAxisReset();
-    else return encoders.XAxisReset();
-  }
-#elif defined(ARDUINO_ENC_COUNTER)
+#if defined(USE_ENCODERS)
   volatile long left_enc_pos = 0L;
   volatile long right_enc_pos = 0L;
 
-  uint8_t curr_left = digitalRead(LEFT_ENC_PIN_A);
-  uint8_t curr_right = digitalRead(RIGHT_ENC_PIN_A);
+  uint8_t curr_left = digitalRead(LEFT_ENC_CLK);
+  uint8_t curr_right = digitalRead(RIGHT_ENC_CLK);
   uint8_t prev_left = curr_left;
   uint8_t prev_right = curr_right;
 
   /* Interrupt routine for LEFT encoder, taking care of actual counting */
-  void ISR_L (){
-  	if (digitalRead(LEFT_ENC_PIN_B) == LOW)
+  void IRAM_ATTR ENC_L_ISR (){
+  	if (digitalRead(LEFT_ENC_DT) == digitalRead(LEFT_ENC_CLK))
     left_enc_pos ++;
     else
     left_enc_pos --;
   }
   
   /* Interrupt routine for RIGHT encoder, taking care of actual counting */
-  void ISR_R (){
-    if (digitalRead(RIGHT_ENC_PIN_B) == LOW)
+  void IRAM_ATTR ENC_R_ISR (){
+    if (digitalRead(RIGHT_ENC_DT) == digitalRead(RIGHT_ENC_CLK))
     right_enc_pos ++;
     else
     right_enc_pos --;

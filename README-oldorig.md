@@ -469,10 +469,10 @@ Using L298 Motor driver
 -----------------------
 the wiring between the L298 motor driver and arduino board is defined in motor_driver.h in the firmware as follow:
 
-    #define RIGHT_MOTOR_BACKWARD 5
-    #define LEFT_MOTOR_BACKWARD  6
-    #define RIGHT_MOTOR_FORWARD  9
-    #define LEFT_MOTOR_FORWARD   10
+    #define RIGHT_MOTOR_DIR 5
+    #define LEFT_MOTOR_DIR  6
+    #define RIGHT_MOTOR_DRIVE  9
+    #define LEFT_MOTOR_DRIVE   10
     #define RIGHT_MOTOR_ENABLE 12
     #define LEFT_MOTOR_ENABLE 13
 

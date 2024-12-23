@@ -6,4 +6,4 @@
 // functions to get imu
 void beginIMU();
 void updateIMU();
-float getImu(int value);
+double getImu(int value);

@@ -3,7 +3,7 @@
     volatile int left_IR = 0;
     volatile int right_IR = 0;
 
-    int getIRDist(int ir_pin){
+    double getIRDist(int ir_pin){
         if(ir_pin == LEFT) return left_IR;
         else return right_IR;
     }

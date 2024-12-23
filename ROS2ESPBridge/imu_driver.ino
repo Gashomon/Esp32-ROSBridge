@@ -19,7 +19,7 @@
             mpu.getEvent(&a, &g, &t);
         }
 
-        float getImu(int value){
+        double getImu(int value){
             switch (value)
             {
             case ACCX:

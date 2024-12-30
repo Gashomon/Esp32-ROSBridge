@@ -67,7 +67,7 @@
 #define BAUDRATE     57600
 
 /* Maximum PWM signal */
-#define MAX_PWM        255
+#define MAX_PWM        180
 
 /* Include definition of serial commands */
 #include "commands.h"
@@ -202,6 +202,7 @@ void runCommand() {
     else moving = 1;
     leftPID.TargetTicksPerFrame = arg1;
     rightPID.TargetTicksPerFrame = arg2;
+    Serial.println("SPEED SET");
     break;
 
   case MOTOR_RAW_PWM:
@@ -292,18 +293,21 @@ void setup() {
 */
 void loop() {
   
-    // Serial.println(Serial.available()); delay(1000);
+    // Serial.println("hi"); delay(1000);
   while (Serial.available() > 0) {
     
     // Read the next character
     chr = Serial.read();
-    // Serial.println(chr); delay(1000);
+    // Serial.println(chr); 
     // Terminate a command with a CR
     if (chr == 13) {
       if (arg == 1) argv1[in_dicks] = NULL;
       else if (arg == 2) argv2[in_dicks] = NULL;
+      // Serial.println("run"); 
       runCommand();
+      // Serial.println("got run"); 
       resetCommand();
+      // Serial.println("reset"); 
     }
     // Use spaces to delimit parts of the command
     else if (chr == ' ') {

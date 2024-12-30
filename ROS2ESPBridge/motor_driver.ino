@@ -28,13 +28,13 @@
     
     if (i == LEFT) { 
       if      (reverse == 0) { analogWrite(LEFT_MOTOR_DRIVE, spd); digitalWrite(LEFT_MOTOR_DIR, LOW); }
-      else if (reverse == 1) { analogWrite(LEFT_MOTOR_DRIVE, spd); digitalWrite(LEFT_MOTOR_DIR, HIGH); }
+      else /*if (reverse == 1)*/ { analogWrite(LEFT_MOTOR_DRIVE, spd); digitalWrite(LEFT_MOTOR_DIR, HIGH); }
     }
     else /*if (i == RIGHT) //no need for condition*/ {
       if      (reverse == 0) { analogWrite(RIGHT_MOTOR_DRIVE, spd); digitalWrite(RIGHT_MOTOR_DIR, LOW); }
-      else if (reverse == 1) { analogWrite(RIGHT_MOTOR_DRIVE, spd); digitalWrite(RIGHT_MOTOR_DIR, HIGH); }
+      else /*if (reverse == 1)*/ { analogWrite(RIGHT_MOTOR_DRIVE, spd); digitalWrite(RIGHT_MOTOR_DIR, HIGH); }
     }
-  }
+  } 
   
   void setMotorSpeeds(int leftSpeed, int rightSpeed) {
     setMotorSpeed(LEFT, leftSpeed);

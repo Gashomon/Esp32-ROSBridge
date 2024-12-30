@@ -20,18 +20,26 @@
 
   /* Interrupt routine for LEFT encoder, taking care of actual counting */
   void IRAM_ATTR ENC_L_ISR (){
-  	if (digitalRead(LEFT_ENC_DT) == digitalRead(LEFT_ENC_CLK))
-    left_enc_pos ++;
+  	if (digitalRead(LEFT_ENC_DT) == 1 /*digitalRead(LEFT_ENC_CLK)*/)
+    left_enc_pos++;
     else
-    left_enc_pos --;
+    left_enc_pos--;
+
+    // Serial.print(left_enc_pos);
+    // Serial.print(" ");
+    // Serial.println(right_enc_pos);
   }
   
   /* Interrupt routine for RIGHT encoder, taking care of actual counting */
   void IRAM_ATTR ENC_R_ISR (){
-    if (digitalRead(RIGHT_ENC_DT) == digitalRead(RIGHT_ENC_CLK))
-    right_enc_pos ++;
+    if (digitalRead(RIGHT_ENC_DT) == 1 /*digitalRead(RIGHT_ENC_CLK)*/)
+    right_enc_pos++;
     else
-    right_enc_pos --;
+    right_enc_pos--;
+
+    // Serial.print(left_enc_pos);
+    // Serial.print(" ");
+    // Serial.println(right_enc_pos);
   }
   
   /* Wrap the encoder reading function */

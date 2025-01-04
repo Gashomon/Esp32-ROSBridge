@@ -273,16 +273,20 @@ void setup() {
   // IMU initializations
   #ifdef IMU_READER
     pinMode(IMUSCL, INPUT);  
-    pinMode(IRRIGHT, INPUT);
+    pinMode(IMUSDA, INPUT);
     beginIMU();
   #endif
 
   // IR initializations
   #ifdef IR_READER
-    pinMode(IRLEFT, INPUT);  
-    pinMode(IRRIGHT, INPUT);
-    attachInterrupt(digitalPinToInterrupt(IRLEFT),IR_L_ISR,CHANGE);
-    attachInterrupt(digitalPinToInterrupt(IRRIGHT),IR_R_ISR,CHANGE);
+    pinMode(IR_LIN, INPUT);  
+    pinMode(IR_LOUT, OUTPUT);
+    pinMode(IR_RIN, INPUT);  
+    pinMode(IR_ROUT, OUTPUT);
+    resetTimers();
+    // attachInterrupt(digitalPinToInterrupt(IRLEFT),IR_L_ISR,CHANGE);
+    // attachInterrupt(digitalPinToInterrupt(IRRIGHT),IR_R_ISR,CHANGE);
+
   #endif
 #endif
 }
@@ -357,7 +361,9 @@ void loop() {
     updateIMU();
   #endif
 
-
+  #ifdef IR_READER
+    updateRanges();
+  #endif
 
 #endif
 

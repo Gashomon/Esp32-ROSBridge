@@ -15,8 +15,11 @@ left encoder dt - 16
 right encoder clk - 19
 right encoder dt - 18
 
-left IR - 13
-right IR - 14
+IR = ultrasonic
+left IR_in - 13
+left IR_out - 14
+right IR_in - 04
+right IR_out - 27
 
 IMU scl - 21
 IMU sda - 22

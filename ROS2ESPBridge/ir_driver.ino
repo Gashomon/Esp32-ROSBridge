@@ -1,15 +1,17 @@
 #ifdef USE_BASE
     #ifdef IR_READER
-    volatile int left_IR = 0;
-    volatile int right_IR = 0;
+    volatile double left_IR = 0;
+    volatile double right_IR = 0;
 
     bool LEFT_SENT = false;
-    volatile unsigned long LEFT_start_time;
-    volatile unsigned long LEFT_ms_delay = 0;
+    bool LEFT_GOT = false;
+    volatile unsigned long LEFT_timer1;
+    volatile unsigned long LEFT_timer2;
 
     bool RIGHT_SENT = false;
-    volatile unsigned long RIGHT_start_time;
-    volatile unsigned long RIGHT_ms_delay = 0;
+    bool RIGHT_GOT = false;
+    volatile unsigned long RIGHT_timer1;
+    volatile unsigned long RIGHT_timer2;
 
     double getIRDist(int ir_pin){
         if(ir_pin == LEFT) return left_IR;
@@ -25,70 +27,92 @@
 
     }
 
-    int computeDist(int ms){
-        int formula = ms * 0.034 / 2;
+    double computeDist(double microvalue){
+        double formula = microvalue * 0.034 / 2;
         return formula;
     }
 
     void updateRangeLeft(){
-        if(millis()-LEFT_start_time <= 10){
-            //begin sending signal
+        //First 10 microseconds. Send Signal
+        if(micros()-LEFT_timer1 <= 10){
             digitalWrite(IR_LOUT, HIGH);
             LEFT_SENT = true;
+            LEFT_GOT = false;
         }
-        else if(millis()-LEFT_start_time >= 1000000){
-            //reset 
+
+        //Timeout of 1 second = 1M micros. Send a huge number. Reset.
+        else if(micros()-LEFT_timer1 >= 1000000){
             digitalWrite(IR_LOUT, LOW);
             left_IR = computeDist(1000000);
-            LEFT_start_time = millis();
+            LEFT_timer1 = micros();
             LEFT_SENT = false;
+            LEFT_GOT = false;
         }
+
+        //Waiting to receive the signal. Send Distance
         else{
-            //wait for signal
-            digitalWrite(IR_LOUT, LOW);
+            digitalWrite(IR_LOUT, LOW); //Stop Sending signal
+
             //Compute Distance & reset
             if(LEFT_SENT){
-                if(digitalRead(IR_LIN) == HIGH){
-                    LEFT_ms_delay = millis() - LEFT_start_time - 10;
-                    left_IR = computeDist(LEFT_ms_delay);
-                    LEFT_start_time = millis();
+
+                //Start Timer. State Signal is received.
+                if(digitalRead(IR_LIN) == HIGH && !LEFT_GOT){
+                    LEFT_timer2 = micros();
+                    LEFT_GOT = true;
+                }
+
+                //End Timer. Check end of signal. Send distance
+                if(digitalRead(IR_LIN) == LOW && LEFT_GOT){
+                    left_IR = computeDist(micros()-LEFT_timer2);
+                    LEFT_timer1 = micros();
                     LEFT_SENT = false;
+                    LEFT_GOT = false;
                 }
             }
+
+            // Error Reset
             else{
-                LEFT_start_time = millis();
+                LEFT_timer1 = micros();
             }
         }
     }
 
     void updateRangeRight(){
-        if(millis()-RIGHT_start_time <= 10){
-            //begin sending signal
-            digitalWrite(IR_ROUT, HIGH);
-            RIGHT_SENT = true;
-        }
-        else if(millis()-RIGHT_start_time >= 1000000){
-            //reset 
-            digitalWrite(IR_ROUT, LOW);
-            right_IR = computeDist(1000000);
-            RIGHT_start_time = millis();
-            RIGHT_SENT = false;
-        }
-        else{
-            //wait for signal
-            digitalWrite(IR_ROUT, LOW);
-            //Compute Distance & reset
-            if(RIGHT_SENT){
-                if(digitalRead(IR_RIN) == HIGH){
-                    RIGHT_ms_delay = millis() - RIGHT_start_time - 10;
-                    right_IR = computeDist(RIGHT_ms_delay);
-                    RIGHT_start_time = millis();
-                    RIGHT_SENT = false;
-                }
-            }
-            else{
-                RIGHT_start_time = millis();
-            }
+      
+      //Timeout of 1 second = 1M micros. Send a huge number. Reset.
+      if(micros()-RIGHT_timer1 >= 1000000){
+          digitalWrite(IR_ROUT, LOW);
+          right_IR = computeDist(1000000);
+          resetRight();
+      }
+
+      //First 10 microseconds. Send Signal
+      if(micros()-RIGHT_timer1 <= 10){
+          digitalWrite(IR_ROUT, HIGH);
+          RIGHT_SENT = true;
+          RIGHT_GOT = false;
+      }
+
+      //Waiting to receive the signal. Send Distance
+      if(micros()-RIGHT_timer1 >= 10){
+          digitalWrite(IR_ROUT, LOW); //Stop Sending signal
+
+          //Compute Distance & reset
+          if(RIGHT_SENT){
+
+              //Start Timer. State Signal is received.
+              if(digitalRead(IR_RIN) == HIGH && !RIGHT_GOT){
+                  RIGHT_timer2 = micros();
+                  RIGHT_GOT = true;
+              }
+              
+              //End Timer. Check end of signal. Send distance
+              if(digitalRead(IR_RIN) == LOW && RIGHT_GOT){
+                  right_IR = computeDist(micros()-RIGHT_timer2);
+                  resetRight();
+              }
+          }
         }
     }
     
@@ -97,9 +121,26 @@
         updateRangeRight();
     }
     
-    void resetTimers(){
-        LEFT_start_time = millis();
-        RIGHT_start_time = millis();
+    void resetLeft(){
+        digitalWrite(IR_LOUT, LOW);
+        LEFT_timer1 = micros();
+        LEFT_timer2 = 0;
+        LEFT_SENT = false;
+        LEFT_GOT = false;
     }
+
+    void resetRight(){
+        // digitalWrite(IR_ROUT, LOW);
+        RIGHT_timer1 = micros();
+        RIGHT_timer2 = 0;
+        RIGHT_SENT = false;
+        RIGHT_GOT = false;
+    }
+
+    void resetTimers(){
+        resetLeft();
+        resetRight();
+    }
+
     #endif
 #endif

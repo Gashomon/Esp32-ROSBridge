@@ -13,10 +13,18 @@
     volatile unsigned long RIGHT_timer1;
     volatile unsigned long RIGHT_timer2;
 
+    #ifdef WORKING_RANGE
     double getIRDist(int ir_pin){
         if(ir_pin == LEFT) return left_IR;
         else return right_IR;
     }
+    #endif
+
+    #ifndef WORKING_RANGE
+    double getIRDist(int ir_pin){
+        return 100000;
+    }
+    #endif
 
     void IRAM_ATTR IR_R_ISR() {
         // right_IR = digitalRead(IRRIGHT);
@@ -33,48 +41,39 @@
     }
 
     void updateRangeLeft(){
-        //First 10 microseconds. Send Signal
-        if(micros()-LEFT_timer1 <= 10){
-            digitalWrite(IR_LOUT, HIGH);
-            LEFT_SENT = true;
-            LEFT_GOT = false;
-        }
+      //Timeout of 1 second = 1M micros. Send a huge number. Reset.
+      if(micros()-LEFT_timer1 >= 1000000){
+          digitalWrite(IR_LOUT, LOW);
+          left_IR = computeDist(1000000);
+          resetLeft();
+      }
 
-        //Timeout of 1 second = 1M micros. Send a huge number. Reset.
-        else if(micros()-LEFT_timer1 >= 1000000){
-            digitalWrite(IR_LOUT, LOW);
-            left_IR = computeDist(1000000);
-            LEFT_timer1 = micros();
-            LEFT_SENT = false;
-            LEFT_GOT = false;
-        }
+      //First 10 microseconds. Send Signal
+      if(micros()-LEFT_timer1 <= 10){
+          digitalWrite(IR_LOUT, HIGH);
+          LEFT_SENT = true;
+          LEFT_GOT = false;
+      }
 
-        //Waiting to receive the signal. Send Distance
-        else{
-            digitalWrite(IR_LOUT, LOW); //Stop Sending signal
+      //Waiting to receive the signal. Send Distance
+      if(micros()-LEFT_timer1 >= 10){
+          digitalWrite(IR_LOUT, LOW); //Stop Sending signal
 
-            //Compute Distance & reset
-            if(LEFT_SENT){
+          //Compute Distance & reset
+          if(LEFT_SENT){
 
-                //Start Timer. State Signal is received.
-                if(digitalRead(IR_LIN) == HIGH && !LEFT_GOT){
-                    LEFT_timer2 = micros();
-                    LEFT_GOT = true;
-                }
-
-                //End Timer. Check end of signal. Send distance
-                if(digitalRead(IR_LIN) == LOW && LEFT_GOT){
-                    left_IR = computeDist(micros()-LEFT_timer2);
-                    LEFT_timer1 = micros();
-                    LEFT_SENT = false;
-                    LEFT_GOT = false;
-                }
-            }
-
-            // Error Reset
-            else{
-                LEFT_timer1 = micros();
-            }
+              //Start Timer. State Signal is received.
+              if(digitalRead(IR_LIN) == HIGH && !LEFT_GOT){
+                  LEFT_timer2 = micros();
+                  LEFT_GOT = true;
+              }
+              
+              //End Timer. Check end of signal. Send distance
+              if(digitalRead(IR_LIN) == LOW && LEFT_GOT){
+                  left_IR = computeDist(micros()-LEFT_timer2);
+                  resetLeft();
+              }
+          }
         }
     }
 
@@ -122,7 +121,7 @@
     }
     
     void resetLeft(){
-        digitalWrite(IR_LOUT, LOW);
+        // digitalWrite(IR_LOUT, LOW);
         LEFT_timer1 = micros();
         LEFT_timer2 = 0;
         LEFT_SENT = false;

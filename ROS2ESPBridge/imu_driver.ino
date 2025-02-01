@@ -1,4 +1,3 @@
-
 #ifdef USE_BASE
     #ifdef IMU_READER
         #include <Adafruit_MPU6050.h>
@@ -18,7 +17,8 @@
         void updateIMU(){
             mpu.getEvent(&a, &g, &t);
         }
-
+        
+        #ifdef WORKING_IMU
         double getImu(int value){
             switch (value)
             {
@@ -44,6 +44,13 @@
                 break;
             }
         }
+        #endif
+        
+        #ifndef WORKING_IMU
+        double getImu(int vale){
+          return 0;
+        }
+        #endif
 
 
     #endif

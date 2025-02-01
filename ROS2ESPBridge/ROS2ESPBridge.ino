@@ -58,13 +58,15 @@
 
   /* My own IMU sensor*/
   #define IMU_READER
+  #define WORKING_IMU
 
   /* My own IR sensor*/
   #define IR_READER
+  #define WORKING_RANGE
 #endif
 
 /* Serial port baud rate */
-#define BAUDRATE     57600
+#define BAUDRATE     115200
 
 /* Maximum PWM signal */
 #define MAX_PWM        180
@@ -264,8 +266,8 @@ void setup() {
     pinMode(RIGHT_ENC_CLK, INPUT);
     pinMode(LEFT_ENC_DT, INPUT);
     pinMode(RIGHT_ENC_DT, INPUT);
-    attachInterrupt(digitalPinToInterrupt(LEFT_ENC_CLK),ENC_L_ISR,RISING);
-    attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_CLK),ENC_R_ISR,RISING);
+    // attachInterrupt(digitalPinToInterrupt(LEFT_ENC_CLK),ENC_L_ISR,RISING);
+    // attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_CLK),ENC_R_ISR,RISING);
   #endif
   initMotorController();
   resetPID();
@@ -365,6 +367,7 @@ void loop() {
     updateRanges();
   #endif
 
+  updateEncoders();
 #endif
 
 }

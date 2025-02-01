@@ -26,13 +26,20 @@
     }
     #endif
 
-    void IRAM_ATTR IR_R_ISR() {
-        // right_IR = digitalRead(IRRIGHT);
+    void IRAM_ATTR IR_R_ISRR() {
 
     }
-    void IRAM_ATTR IR_L_ISR() {
-        // left_IR = digitalRead(IRLEFT);
+    void IRAM_ATTR IR_L_ISRR() {
 
+    }
+
+    void IRAM_ATTR IR_R_ISRF() {
+      right_IR = computeDist(micros()-RIGHT_timer2);
+                  resetRight();
+    }
+    void IRAM_ATTR IR_L_ISRF() {
+      left_IR = computeDist(micros()-LEFT_timer2);
+                  resetLeft();
     }
 
     double computeDist(double microvalue){
@@ -69,10 +76,10 @@
               }
               
               //End Timer. Check end of signal. Send distance
-              if(digitalRead(IR_LIN) == LOW && LEFT_GOT){
-                  left_IR = computeDist(micros()-LEFT_timer2);
-                  resetLeft();
-              }
+              // if(digitalRead(IR_LIN) == LOW && LEFT_GOT){
+              //     left_IR = computeDist(micros()-LEFT_timer2);
+              //     resetLeft();
+              // }
           }
         }
     }
@@ -107,10 +114,10 @@
               }
               
               //End Timer. Check end of signal. Send distance
-              if(digitalRead(IR_RIN) == LOW && RIGHT_GOT){
-                  right_IR = computeDist(micros()-RIGHT_timer2);
-                  resetRight();
-              }
+              // if(digitalRead(IR_RIN) == LOW && RIGHT_GOT){
+              //     right_IR = computeDist(micros()-RIGHT_timer2);
+              //     resetRight();
+              // }
           }
         }
     }

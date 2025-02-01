@@ -7,7 +7,10 @@
 
 double getIRDist(int ir_pin);
 
-void IRAM_ATTR IR_R_ISR();
-void IRAM_ATTR IR_L_ISR();
+void IRAM_ATTR IR_R_ISRR();
+void IRAM_ATTR IR_R_ISRF();
+void IRAM_ATTR IR_L_ISRR();
+void IRAM_ATTR IR_L_ISRF();
+
 void updateRanges();
 void resetTimers();

@@ -286,9 +286,10 @@ void setup() {
     pinMode(IR_RIN, INPUT);  
     pinMode(IR_ROUT, OUTPUT);
     resetTimers();
-    // attachInterrupt(digitalPinToInterrupt(IRLEFT),IR_L_ISR,CHANGE);
-    // attachInterrupt(digitalPinToInterrupt(IRRIGHT),IR_R_ISR,CHANGE);
-
+    // attachInterrupt(digitalPinToInterrupt(IR_LIN),IR_L_ISRR,RISING);
+    attachInterrupt(digitalPinToInterrupt(IR_LIN),IR_L_ISRF,FALLING);
+    // attachInterrupt(digitalPinToInterrupt(IR_RIN),IR_R_ISRR,RISING);
+    attachInterrupt(digitalPinToInterrupt(IR_RIN),IR_R_ISRF,FALLING);
   #endif
 #endif
 }

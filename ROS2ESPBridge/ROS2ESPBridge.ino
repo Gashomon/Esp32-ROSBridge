@@ -69,7 +69,7 @@
 #define BAUDRATE     115200
 
 /* Maximum PWM signal */
-#define MAX_PWM        180
+#define MAX_PWM        200
 
 /* Include definition of serial commands */
 #include "commands.h"

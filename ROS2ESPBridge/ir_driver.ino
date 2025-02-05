@@ -35,15 +35,16 @@
 
     void IRAM_ATTR IR_R_ISRF() {
       right_IR = computeDist(micros()-RIGHT_timer2);
-                  resetRight();
+      resetRight();
     }
     void IRAM_ATTR IR_L_ISRF() {
       left_IR = computeDist(micros()-LEFT_timer2);
-                  resetLeft();
+      resetLeft();
     }
 
     double computeDist(double microvalue){
         double formula = microvalue * 0.034 / 2;
+        formula = formula * 0.01; //cm to m
         return formula;
     }
 
@@ -85,7 +86,6 @@
     }
 
     void updateRangeRight(){
-      
       //Timeout of 1 second = 1M micros. Send a huge number. Reset.
       if(micros()-RIGHT_timer1 >= 1000000){
           digitalWrite(IR_ROUT, LOW);
@@ -130,7 +130,7 @@
     void resetLeft(){
         // digitalWrite(IR_LOUT, LOW);
         LEFT_timer1 = micros();
-        LEFT_timer2 = 0;
+        LEFT_timer2 = micros();
         LEFT_SENT = false;
         LEFT_GOT = false;
     }
@@ -138,7 +138,7 @@
     void resetRight(){
         // digitalWrite(IR_ROUT, LOW);
         RIGHT_timer1 = micros();
-        RIGHT_timer2 = 0;
+        RIGHT_timer2 = micros();
         RIGHT_SENT = false;
         RIGHT_GOT = false;
     }

@@ -26,17 +26,17 @@ typedef struct {
   //int Ierror;
   int ITerm;                    //integrated term
 
-  long output;                    // last motor setting
+  long output;                  // last motor setting
 }
 SetPointInfo;
 
 SetPointInfo leftPID, rightPID;
 
 /* PID Parameters */
-int Kp = 5;
-int Kd = 30;
-int Ki = 0;
-int Ko = 50;
+int Kp = 5; //Big Change
+int Kd = 30; // Fast Change
+int Ki = 0; // Steady Change
+int Ko = 1; // Some shit that is dividing the final output
 
 unsigned char moving = 0; // is the base in motion?
 
@@ -95,7 +95,7 @@ void doPID(SetPointInfo * p) {
   /*
   * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
   */
-    p->ITerm += Ki * Perror;
+  p->ITerm += Ki * Perror;
 
   p->output = output;
   p->PrevInput = input;
@@ -125,5 +125,6 @@ void updatePID() {
 
   /* Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
+  
 }
 

@@ -20,7 +20,7 @@
   
   void setMotorSpeed(int i, int spd) {
     unsigned char reverse = 0;
-    
+      
     if (spd < 0)
     {
       spd = -spd;

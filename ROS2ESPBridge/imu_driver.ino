@@ -16,6 +16,16 @@
 
         void updateIMU(){
             mpu.getEvent(&a, &g, &t);
+            if (a.acceleration.x == 0 &&
+                a.acceleration.y == 0 &&
+                a.acceleration.z == 0){
+                  // ~Adafruit_MPU6050 mpu;
+                  // Adafruit_MPU6050 mpu;
+                  beginIMU();
+                } 
+            else{
+
+            }
         }
         
         #ifdef WORKING_IMU
@@ -47,9 +57,9 @@
         #endif
         
         #ifndef WORKING_IMU
-        double getImu(int vale){
-          return 0;
-        }
+        // double getImu(int vale){
+        //   return 0;
+        // }
         #endif
 
 

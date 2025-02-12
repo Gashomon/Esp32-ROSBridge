@@ -217,10 +217,17 @@ void runCommand() {
 
   // Must tweak Update PID
   case UPDATE_PID: 
-    while ((str = strtok_r(p, ":", &p)) != &nul) {
+    while ((str = strtok_r(p, ":", &p) ) != &nul) {
        pid_args[i] = atoi(str);
        i++;
+       if( i >= 4){
+        break;
+       }
     }
+    // pid_args[0] = 10;
+    // pid_args[1] = 10;
+    // pid_args[2] = 10;
+    // pid_args[3] = 10;
     Kp = pid_args[0];
     Kd = pid_args[1];
     Ki = pid_args[2];

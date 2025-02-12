@@ -64,9 +64,9 @@
       curr_left = digitalRead(LEFT_ENC_CLK);
       if (curr_left != prev_left && curr_left == HIGH){
         if (digitalRead(LEFT_ENC_DT) == HIGH) {
-          left_enc_pos++;
-        } else {
           left_enc_pos--;
+        } else {
+          left_enc_pos++;
         }
       }
       prev_left = curr_left;
@@ -75,17 +75,15 @@
       curr_right = digitalRead(RIGHT_ENC_CLK);
       if (curr_right != prev_right && curr_right == HIGH){
         if (digitalRead(RIGHT_ENC_DT) == HIGH) {
-          right_enc_pos--;
-        } else {
           right_enc_pos++;
+        } else {
+          right_enc_pos--;
         }
       }
       prev_right = curr_right;
     }
     return;
   }
-  
-  
   
 #else
   #error A encoder driver must be selected!
@@ -100,6 +98,9 @@ void resetEncoders() {
 void updateEncoders(){
     updateEncoder(LEFT);
     updateEncoder(RIGHT);
+    // Serial.print(left_enc_pos);
+    // Serial.print(" ");
+    // Serial.println(right_enc_pos);
   }
 
 #endif

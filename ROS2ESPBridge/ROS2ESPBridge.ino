@@ -344,10 +344,33 @@ void loop() {
     }
     
     // Serial.println("hello"); delay(1000);
+    #ifdef IMU_READER
+      updateIMU();
+    #endif
+
+    #ifdef IR_READER
+      updateRanges();
+    #endif
+
+    updateEncoders();
   }
   
 // If we are using base control, run a PID calculation at the appropriate intervals
 #ifdef USE_BASE
+  // Serial.print(readEncoder(LEFT));
+  //   Serial.print(" ");
+  //   Serial.println(readEncoder(RIGHT));
+  // Serial.print(getImu(ACCX));
+  //   Serial.print(" ");
+  //   Serial.print(getImu(ACCY));
+  //   Serial.print(" ");
+  //   Serial.print(getImu(ACCZ));
+  //   Serial.print(" ");
+  //   Serial.print(getImu(ROTX));
+  //   Serial.print(" ");
+  //   Serial.print(getImu(ROTY));
+  //   Serial.print(" ");
+  //   Serial.println(getImu(ROTZ));
   if (millis() > nextPID) {
     updatePID();
     nextPID += PID_INTERVAL;
@@ -369,6 +392,7 @@ void loop() {
   #endif
 
   updateEncoders();
+  
 #endif
 
 }

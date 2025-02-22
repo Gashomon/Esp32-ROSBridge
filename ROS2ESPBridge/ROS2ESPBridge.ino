@@ -66,7 +66,7 @@
 #endif
 
 /* Serial port baud rate */
-#define BAUDRATE     115200
+#define BAUDRATE     9600
 
 /* Maximum PWM signal */
 #define MAX_PWM        200
@@ -191,6 +191,7 @@ void runCommand() {
    case RESET_ENCODERS:
     resetEncoders();
     resetPID();
+    Serial.println("RESETTED");
     break;
 
   case MOTOR_SPEEDS:
@@ -213,6 +214,10 @@ void runCommand() {
     resetPID();
     moving = 0; // Sneaky way to temporarily disable the PID
     setMotorSpeeds(arg1, arg2);
+    Serial.print("SPEED AT: ");
+    Serial.print(arg1);
+    Serial.print(" ");
+    Serial.println(arg2);
     break;
 
   // Must tweak Update PID
@@ -232,7 +237,14 @@ void runCommand() {
     Kd = pid_args[1];
     Ki = pid_args[2];
     Ko = pid_args[3];
-    Serial.println("OK");
+    Serial.print("NEW PID (P, D, I, O): ");
+    Serial.print(Kp);
+    Serial.print(" ");
+    Serial.print(Kd);
+    Serial.print(" ");
+    Serial.print(Ki);
+    Serial.print(" ");
+    Serial.println(Ko);
     break;
     
     case IMU_READ:

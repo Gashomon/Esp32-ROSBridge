@@ -36,9 +36,10 @@ SetPointInfo leftPID, rightPID;
 int Kp = 5; //Big Change
 int Kd = 30; // Fast Change
 int Ki = 0; // Steady Change
-int Ko = 10; // Some shit that is dividing the final output. looks like making everything in percentage mode. useful to depend on minimum and maximum input
+int Ko = 1; // Some shit that is dividing the final output. looks like making everything in percentage mode. useful to depend on minimum and maximum input
 
 unsigned char moving = 0; // is the base in motion?
+
 
 /*
 * Initialize PID variables to zero to prevent startup spikes

@@ -40,7 +40,6 @@ int Ko = 1; // Some shit that is dividing the final output. looks like making ev
 
 unsigned char moving = 0; // is the base in motion?
 
-
 /*
 * Initialize PID variables to zero to prevent startup spikes
 * when turning PID on to start moving
@@ -51,15 +50,17 @@ unsigned char moving = 0; // is the base in motion?
 */
 void resetPID(){
    leftPID.TargetTicksPerFrame = 0.0;
-   leftPID.Encoder = readEncoder(LEFT);
    leftPID.PrevEnc = leftPID.Encoder;
+   leftPID.Encoder = readEncoder(LEFT);
+   
    leftPID.output = 0;
    leftPID.PrevInput = 0;
    leftPID.ITerm = 0;
 
    rightPID.TargetTicksPerFrame = 0.0;
-   rightPID.Encoder = readEncoder(RIGHT);
    rightPID.PrevEnc = rightPID.Encoder;
+   rightPID.Encoder = readEncoder(RIGHT);
+   
    rightPID.output = 0;
    rightPID.PrevInput = 0;
    rightPID.ITerm = 0;
@@ -88,15 +89,29 @@ void doPID(SetPointInfo * p) {
   output += p->output;
   // Accumulate Integral error *or* Limit output.
   // Stop accumulating when output saturates
-  if (output >= MAX_PWM)
-    output = MAX_PWM;
-  else if (output <= -MAX_PWM)
-    output = -MAX_PWM;
+  if ((leftPID.output > 0 && rightPID.output < 0) || (leftPID.output < 0 && rightPID.output > 0))
+  {
+      if (output >= MAX_PWM_SPIN)
+        output = MAX_PWM_SPIN;
+      else if (output <= -MAX_PWM_SPIN)
+        output = -MAX_PWM_SPIN;
+      else
+      p->ITerm += Ki * Perror;
+  }
   else
+  {
+    if (output >= MAX_PWM)
+      output = MAX_PWM;
+    else if (output <= -MAX_PWM)
+      output = -MAX_PWM;
+    else
+    p->ITerm += Ki * Perror;
+  }
+  
   /*
   * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
   */
-  p->ITerm += Ki * Perror;
+  // p->ITerm += Ki * Perror;
 
   p->output = output;
   p->PrevInput = input;
@@ -124,12 +139,29 @@ void updatePID() {
   doPID(&rightPID);
   doPID(&leftPID);
 
+  // Serial.print("LeftE: ");
+  // Serial.print(leftPID.Encoder);
+  // Serial.print(" RightE: ");
+  // Serial.println(rightPID.Encoder);
+
   // Serial.print("Left: ");
   // Serial.print(leftPID.output);
   // Serial.print(" Right: ");
   // Serial.println(rightPID.output);
+  
+  // Serial.println(); 
   /* Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
   
 }
 
+void holdWheel(int leftHold, int rightHold){
+  int leftChange = 0;
+  int rightChange = 0;
+    if (leftPID.Encoder > leftHold) leftChange = -1;
+    else leftChange = 1;
+}
+
+void brake(){
+
+}

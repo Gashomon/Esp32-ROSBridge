@@ -46,6 +46,7 @@
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }
+  
 #else
   #error A motor driver must be selected!
 #endif

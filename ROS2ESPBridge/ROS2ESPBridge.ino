@@ -65,11 +65,12 @@
   #define WORKING_RANGE
 #endif
 
-/* Serial port baud rate */
-#define BAUDRATE     9600
+/* Serial port baud rate SHOULD BE 115200, BUT 9600 IS USED FOR DEBUGGING WITH WIRE EXTENSION*/
+#define BAUDRATE        115200
 
 /* Maximum PWM signal */
-#define MAX_PWM        200
+#define MAX_PWM         150
+#define MAX_PWM_SPIN    150
 
 /* Include definition of serial commands */
 #include "commands.h"
@@ -98,7 +99,7 @@
   #include "ir_driver.h"
 
   /* Run the PID loop at 30 times per second */
-  #define PID_RATE           30     // Hz
+  #define PID_RATE           50     // Hz
 
   /* Convert the rate into an interval */
   const int PID_INTERVAL = 1000 / PID_RATE;
@@ -107,7 +108,7 @@
   unsigned long nextPID = PID_INTERVAL;
 
   /* Stop the robot if it hasn't received a movement command in this number of milliseconds */
-  #define AUTO_STOP_INTERVAL 2000
+  #define AUTO_STOP_INTERVAL 500
   long lastMotorCommand = AUTO_STOP_INTERVAL;  
 #endif
 
@@ -164,17 +165,17 @@ void runCommand() {
     break;
   case ANALOG_WRITE:
     analogWrite(arg1, arg2);
-    Serial.println("OK"); 
+    Serial.println("AW"); 
     break;
   case DIGITAL_WRITE:
     if (arg2 == 0) digitalWrite(arg1, LOW);
     else if (arg2 == 1) digitalWrite(arg1, HIGH);
-    Serial.println("OK"); 
+    Serial.println("DW"); 
     break;
   case PIN_MODE:
     if (arg2 == 0) pinMode(arg1, INPUT);
     else if (arg2 == 1) pinMode(arg1, OUTPUT);
-    Serial.println("OK");
+    Serial.println("PM");
     break;
   case PING:
     Serial.println(Ping(arg1));
@@ -191,7 +192,7 @@ void runCommand() {
    case RESET_ENCODERS:
     resetEncoders();
     resetPID();
-    Serial.println("RESETTED");
+    Serial.println("RESET");
     break;
 
   case MOTOR_SPEEDS:
@@ -205,7 +206,7 @@ void runCommand() {
     else moving = 1;
     leftPID.TargetTicksPerFrame = arg1;
     rightPID.TargetTicksPerFrame = arg2;
-    Serial.println("SPEED SET");
+    Serial.println("SPEEDS");
     break;
 
   case MOTOR_RAW_PWM:
@@ -214,10 +215,7 @@ void runCommand() {
     resetPID();
     moving = 0; // Sneaky way to temporarily disable the PID
     setMotorSpeeds(arg1, arg2);
-    Serial.print("SPEED AT: ");
-    Serial.print(arg1);
-    Serial.print(" ");
-    Serial.println(arg2);
+    Serial.println("RAW");
     break;
 
   // Must tweak Update PID
@@ -237,14 +235,15 @@ void runCommand() {
     Kd = pid_args[1];
     Ki = pid_args[2];
     Ko = pid_args[3];
-    Serial.print("NEW PID (P, D, I, O): ");
-    Serial.print(Kp);
-    Serial.print(" ");
-    Serial.print(Kd);
-    Serial.print(" ");
-    Serial.print(Ki);
-    Serial.print(" ");
-    Serial.println(Ko);
+    // Serial.print("NEW PID (P, D, I, O): ");
+    // Serial.print(Kp);
+    // Serial.print(" ");
+    // Serial.print(Kd);
+    // Serial.print(" ");
+    // Serial.print(Ki);
+    // Serial.print(" ");
+    // Serial.println(Ko);
+    Serial.println("PIDU");
     break;
     
     case IMU_READ:
@@ -318,6 +317,10 @@ void setup() {
    interval and check for auto-stop conditions.
 */
 void loop() {
+  // Serial.print("Left: ");
+  // Serial.print(leftPID.output);
+  // Serial.print(" Right: ");
+  // Serial.println(rightPID.output);
   
     // Serial.println("hi"); delay(1000);
   while (Serial.available() > 0) {
@@ -398,7 +401,7 @@ void loop() {
   // Check to see if we have exceeded the auto-stop interval
   if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
     setMotorSpeeds(0, 0);
-    moving = 0;
+    if (leftPID.Encoder == leftPID.PrevEnc && rightPID.Encoder == rightPID.PrevEnc) moving = 0;
   }
 
   //imu sensor reading

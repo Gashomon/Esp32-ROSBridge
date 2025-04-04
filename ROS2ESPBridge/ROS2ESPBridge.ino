@@ -261,9 +261,10 @@ void runCommand() {
     break;
 
     case IR_READ:
-    Serial.print(getIRDist(LEFT));
-    Serial.print(" ");
-    Serial.println(getIRDist(RIGHT));
+    // Serial.print(getIRDist(LEFT));
+    // Serial.print(" ");
+    // Serial.println(getIRDist(RIGHT));
+    Serial.println(getIRDist(MIDDLE));
     break;
 #endif
   default:
@@ -299,15 +300,20 @@ void setup() {
 
   // IR initializations
   #ifdef IR_READER
-    pinMode(IR_LIN, INPUT);  
-    pinMode(IR_LOUT, OUTPUT);
-    pinMode(IR_RIN, INPUT);  
-    pinMode(IR_ROUT, OUTPUT);
-    resetTimers();
+    // pinMode(IR_LIN, INPUT);  
+    // pinMode(IR_LOUT, OUTPUT);
+    // pinMode(IR_RIN, INPUT);  
+    // pinMode(IR_ROUT, OUTPUT);
+    pinMode(IR_IN, INPUT);  
+    pinMode(IR_OUT, OUTPUT);
+    // resetTimers();
+    resetIR();
     // attachInterrupt(digitalPinToInterrupt(IR_LIN),IR_L_ISRR,RISING);
-    attachInterrupt(digitalPinToInterrupt(IR_LIN),IR_L_ISRF,FALLING);
+    // attachInterrupt(digitalPinToInterrupt(IR_LIN),IR_L_ISRF,FALLING);
     // attachInterrupt(digitalPinToInterrupt(IR_RIN),IR_R_ISRR,RISING);
-    attachInterrupt(digitalPinToInterrupt(IR_RIN),IR_R_ISRF,FALLING);
+    // attachInterrupt(digitalPinToInterrupt(IR_RIN),IR_R_ISRF,FALLING);
+
+    attachInterrupt(digitalPinToInterrupt(IR_IN),IR_ISRF,FALLING);
   #endif
 #endif
 }
@@ -371,7 +377,10 @@ void loop() {
     #endif
 
     #ifdef IR_READER
-      updateRanges();
+      // updateRanges();
+      // updateRangeRight();
+      // updateRangeLeft();
+      updateRange();
     #endif
 
     updateEncoders();
@@ -410,7 +419,10 @@ void loop() {
   #endif
 
   #ifdef IR_READER
-    updateRanges();
+    // updateRanges();
+    // updateRangeRight();
+    // updateRangeLeft();
+    updateRange();
   #endif
 
   updateEncoders();

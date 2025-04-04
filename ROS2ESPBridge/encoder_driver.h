@@ -5,12 +5,12 @@
 #ifdef USE_ENCODERS
   //below can be changed, but should be PORTD pins; 
   //otherwise additional changes in the code are required
-  #define LEFT_ENC_CLK D13    //CLK
-  #define LEFT_ENC_DT D14     //DT
+  #define LEFT_ENC_CLK D14    //CLK
+  #define LEFT_ENC_DT D13     //DT
   
   //below can be changed, but should be PORTC pins
-  #define RIGHT_ENC_CLK D23   //CLK
-  #define RIGHT_ENC_DT D27    //DT
+  #define RIGHT_ENC_CLK D4   //CLK
+  #define RIGHT_ENC_DT D15    //DT
 #endif
    
 long readEncoder(int i);

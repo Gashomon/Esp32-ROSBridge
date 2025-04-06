@@ -25,7 +25,6 @@
 
 #define LEFT            1
 #define RIGHT           0
-#define MIDDLE          2
 
 #define ACCX            0
 #define ACCY            1
